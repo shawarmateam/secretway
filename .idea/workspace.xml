@@ -4,32 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b41863a0-0ad8-495a-99f5-0912b340f415" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/accounts_db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/accountsdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/bson-5.1.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/bson-record-codec-5.1.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jbcrypt-0.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/log4j-1.2-api-2.20.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/log4j-api-2.20.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/log4j-core-2.20.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/log4j-slf4j-impl-2.20.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/mongodb-driver-core-5.1.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/mongodb-driver-sync-5.1.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/slf4j-api-1.7.25.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/main/java/com/accsrv/MsgServerBrowser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/main/java/com/accsrv/OfficalAccountDB.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/main/java/com/blockchain/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/main/java/com/blockchain/ClientHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/main/java/com/blockchain/Server.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/src/test/Client4Tests.java" afterDir="false" />
-    </list>
+    <list default="true" id="b41863a0-0ad8-495a-99f5-0912b340f415" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -122,7 +97,7 @@
       <workItem from="1725616643022" duration="143000" />
       <workItem from="1726904515645" duration="29558000" />
       <workItem from="1727371778503" duration="6646000" />
-      <workItem from="1727424034396" duration="8213000" />
+      <workItem from="1727424034396" duration="8547000" />
     </task>
     <servers />
   </component>
