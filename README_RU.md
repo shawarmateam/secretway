@@ -39,7 +39,7 @@
 
 ## Лицензия
 
-Этот проект лицензирован под [MIT License](https://github.com/shawarmateam/secretway/blob/main/VERSION).
+Этот проект лицензирован под [MIT License](https://github.com/shawarmateam/secretway/blob/main/LICENCE).
 
 ## Текущая версия
 
