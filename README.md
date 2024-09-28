@@ -1,6 +1,6 @@
 # SecretWay
 
-> [!ПРЕДУПРЕЖДЕНИЕ]
+> [!WARNING]
 > **README.md** на русском находится [тут](https://github.com/shawarmateam/secretway/blob/main/README_RU.md).
 
 The **private messenger** that works on *community servers*.
