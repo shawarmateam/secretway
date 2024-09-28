@@ -26,21 +26,19 @@ public class OfficalAccountDB {
     public final static int LIMIT = 5;
 
     public static void main(String[] args) {
-        Thread sv_thread = new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(1201)) {
-                System.out.println("Starting off. accounts server...");
+        try (ServerSocket serverSocket = new ServerSocket(1201)) {
+            System.out.println("Starting off. accounts server...");
 
-                while (true) {
-                    Socket clientSocket = serverSocket.accept();
-                    System.out.println("Client was join: " + clientSocket.getInetAddress());
-                    serverHandler(clientSocket);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client was join: " + clientSocket.getInetAddress());
+
+                Thread sv_thread = new Thread(() -> serverHandler(clientSocket));
+                sv_thread.start();
             }
-        });
-
-        sv_thread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static MongoCollection<Document> getUsrDatabase() {
@@ -91,17 +89,29 @@ public class OfficalAccountDB {
             while ((text = in.readLine()) != null) { // infinity reading of text
                 Document text_doc = Document.parse(text);
 
-                if (text_doc.containsKey("usertag") && text_doc.containsKey("password") && text_doc.containsKey("msg")) { // грамотно ли оформлен пакет
-                    Document usr_doc = getUsrDatabase().find(eq("usertag", text_doc.getString("usertag"))).first();
-                    assert usr_doc != null;
+                // if client join to OffAcc Server
+                if (text_doc.getBoolean("client")) {
+                    // грамотно ли оформлен пакет
+                    if (text_doc.containsKey("user") && text_doc.containsKey("password") && text_doc.containsKey("msg") && text_doc.containsKey("sendFieldId")) {
+                        Document usr_doc = getUsrDatabase().find(eq("usertag", text_doc.getString("user"))).first();
+                        assert usr_doc != null;
 
-                    if (checkPassword(usr_doc.getString("password"), text_doc.getString("password"))) {
-                        MongoCollection<Document> msg_servers_db = getMsgServersDatabase();
-                        FindIterable<Document> servers = msg_servers_db.find(eq("online", true)).sort(eq("layer", 1)).limit(LIMIT);
+                        if (checkPassword(usr_doc.getString("password"), text_doc.getString("password"))) {
+                            MongoCollection<Document> msg_servers_db = getMsgServersDatabase();
+                            FindIterable<Document> servers = msg_servers_db.find(eq("online", true)).sort(eq("layer", 1)).limit(LIMIT);
 
-                        for (Document server_doc : servers) {
-                            sendMsg(server_doc, text_doc);
+                            text_doc.remove("password");
+                            for (Document server_doc : servers) {
+                                sendMsg(server_doc, text_doc);
+                            }
                         }
+                    }
+                }
+
+                // if msgS join to OffAcc server
+                else {
+                    if (text_doc.containsKey("user") && text_doc.containsKey("msg")) {
+
                     }
                 }
             }
