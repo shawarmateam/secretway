@@ -35,11 +35,11 @@ public class ClientHandler extends Thread {
             String message;
 
             while ((message = in.readLine()) != null) {
-                JSONObject obj = (JSONObject) JSONValue.parse(message);
+                Document obj = Document.parse(message);
 
                 if (!obj.get("msg").toString().isEmpty() && !obj.get("user").toString().isEmpty()) {
                     System.out.println(obj.get("user") + ">> " + obj.get("msg"));
-                    sendToAll((String) obj.get("msg"), (String) obj.get("user"));
+                    sendToAll(obj);
                 }
             }
             allSockets.remove(clientSocket);
@@ -84,12 +84,16 @@ public class ClientHandler extends Thread {
         return matcher.find() ? matcher.group(1) : null;
     }
 
-    private void sendToAll(String msg, Document user) throws IOException {
+    private void sendToAll(Document msg) throws IOException {
 //        for (Socket socket : allSockets) {
 //            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 //            out.println(user + ">> " + msg);
 //        }
 
+        MongoCollection<Document> usrDatabase = getUsrDatabase();
+        Document user = usrDatabase.find(eq("usertag", msg.getString("user"))).first();
+
+        assert user != null;
         String current_srv = user.getString("current_srv");
         if (getOffAccServersDatabase().find(eq("server_ip", current_srv)).first() == null) {
             try (Socket offAccSocket = new Socket(findIp(current_srv), Integer.parseInt(Objects.requireNonNull(findPort(current_srv))))) {
