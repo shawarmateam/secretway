@@ -1,6 +1,6 @@
 {
-  "user": "user",
+  "userId": "1234",
   "msg": "message",
-  "sendFieldId": "",
+  "sendUserId": "1234",
   "client": false
 }

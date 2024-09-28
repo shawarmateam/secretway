@@ -92,7 +92,7 @@ public class OfficalAccountDB {
                 // if client join to OffAcc Server
                 if (text_doc.getBoolean("client")) {
                     // грамотно ли оформлен пакет
-                    if (text_doc.containsKey("user") && text_doc.containsKey("password") && text_doc.containsKey("msg") && text_doc.containsKey("sendFieldId")) {
+                    if (text_doc.containsKey("userId") && text_doc.containsKey("password") && text_doc.containsKey("msg") && text_doc.containsKey("sendUserId")) {
                         Document usr_doc = getUsrDatabase().find(eq("usertag", text_doc.getString("user"))).first();
                         assert usr_doc != null;
 
@@ -110,7 +110,13 @@ public class OfficalAccountDB {
 
                 // if msgS join to OffAcc server
                 else {
-                    if (text_doc.containsKey("user") && text_doc.containsKey("msg")) {
+                    if (text_doc.containsKey("userId") && text_doc.containsKey("msg")) {
+                        Document user = getMsgServersDatabase().find(eq("user_id", text_doc.getString("userId"))).first(); // user what sends msg
+                        Document user_to_send = getMsgServersDatabase().find(eq("user_id", text_doc.getString("sendUserId"))).first(); // user what gets msg
+
+                        // TODO: сделать хранилище сообщений на пользовательских серверах msgS
+                        // TODO: сделать README.md
+
 
                     }
                 }

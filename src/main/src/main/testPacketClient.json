@@ -1,7 +1,7 @@
 {
-  "user": "user",
+  "userId": "1234",
   "msg": "message",
-  "sendFieldId": "",
+  "sendUserId": "4321",
   "password": "password",
   "client": true
 }
