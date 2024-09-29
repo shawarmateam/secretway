@@ -48,6 +48,10 @@ public class OfficalAccountDB {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             users_db = mongoClient.getDatabase("users_bd");
             return users_db.getCollection("users");
+        } catch (Exception e) {
+            System.out.println("ERROR: can't connect to MongoDB (getUsrDatabase): " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -72,11 +76,11 @@ public class OfficalAccountDB {
         return matcher.find() ? matcher.group(1) : null;
     }
 
-    private static String findPort(String port) {
+    private static String findPort(String ip) {
         Pattern pattern = Pattern.compile("(?<=:).*$");
-        Matcher matcher = pattern.matcher(port);
+        Matcher matcher = pattern.matcher(ip);
 
-        return matcher.find() ? matcher.group(1) : null;
+        return matcher.find() ? matcher.group() : null;
     }
 
     public static void serverHandler(Socket clientSocket) {
@@ -93,12 +97,20 @@ public class OfficalAccountDB {
                 if (text_doc.getBoolean("client")) {
                     // грамотно ли оформлен пакет
                     if (text_doc.containsKey("userId") && text_doc.containsKey("password") && text_doc.containsKey("msg") && text_doc.containsKey("sendUserId")) {
-                        Document usr_doc = getUsrDatabase().find(eq("usertag", text_doc.getString("user"))).first();
+                        System.out.println("LOG: text_doc: "+text_doc);
+
+                        MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
+                        MongoDatabase users_db = mongoClient.getDatabase("users_bd");
+                        MongoCollection<Document> users = users_db.getCollection("users");
+
+                        Document usr_doc = users.find(eq("user_id", text_doc.getString("userId"))).first();
                         assert usr_doc != null;
 
-                        if (checkPassword(usr_doc.getString("password"), text_doc.getString("password"))) {
-                            MongoCollection<Document> msg_servers_db = getMsgServersDatabase();
-                            FindIterable<Document> servers = msg_servers_db.find(eq("online", true)).sort(eq("layer", 1)).limit(LIMIT);
+                        if (checkPassword(text_doc.getString("password"), usr_doc.getString("password"))) {
+                            MongoDatabase msgs_servers_db = mongoClient.getDatabase("servers_bd");
+                            MongoCollection<Document> msgs_servers = msgs_servers_db.getCollection("msgs_servers");
+
+                            FindIterable<Document> servers = msgs_servers.find(eq("online", true)).sort(eq("layer", 1)).limit(LIMIT);
 
                             text_doc.remove("password");
                             for (Document server_doc : servers) {
@@ -115,9 +127,9 @@ public class OfficalAccountDB {
                         Document user_to_send = getMsgServersDatabase().find(eq("user_id", text_doc.getString("sendUserId"))).first(); // user what gets msg
 
                         // TODO: сделать хранилище сообщений на пользовательских серверах msgS
-                        // TODO: сделать README.md
 
-
+                        System.out.println(user);
+                        System.out.println(user_to_send);
                     }
                 }
             }
@@ -132,6 +144,7 @@ public class OfficalAccountDB {
         Thread thread_send = new Thread(() -> {
             String server_ip = server_doc.getString("server_ip");
 
+            System.out.println("LOG: '"+findPort(server_ip)+"'");
             try (Socket socket = new Socket(findIp(server_ip), Integer.parseInt(Objects.requireNonNull(findPort(server_ip))))) {
                 PrintWriter msgs_out = new PrintWriter(socket.getOutputStream(), true);
                 msgs_out.println(text_doc.toString());
