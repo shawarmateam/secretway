@@ -41,30 +41,6 @@ public class OfficalAccountDB {
         }
     }
 
-    private static MongoCollection<Document> getUsrDatabase() {
-        String uri = "mongodb://localhost:27017"; // any server
-
-        MongoDatabase users_db;
-        try (MongoClient mongoClient = MongoClients.create(uri)) {
-            users_db = mongoClient.getDatabase("users_bd");
-            return users_db.getCollection("users");
-        } catch (Exception e) {
-            System.out.println("ERROR: can't connect to MongoDB (getUsrDatabase): " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static MongoCollection<Document> getMsgServersDatabase() {
-        String uri = "mongodb://localhost:27017"; // any server
-
-        MongoDatabase servers_db;
-        try (MongoClient mongoClient = MongoClients.create(uri)) {
-            servers_db = mongoClient.getDatabase("servers_bd");
-            return servers_db.getCollection("msgs_servers");
-        }
-    }
-
     private static boolean checkPassword(String password, String hashedPassword) {
         return BCrypt.checkpw(password, hashedPassword);
     }
@@ -123,8 +99,11 @@ public class OfficalAccountDB {
                 // if msgS join to OffAcc server
                 else {
                     if (text_doc.containsKey("userId") && text_doc.containsKey("msg")) {
-                        Document user = getMsgServersDatabase().find(eq("user_id", text_doc.getString("userId"))).first(); // user what sends msg
-                        Document user_to_send = getMsgServersDatabase().find(eq("user_id", text_doc.getString("sendUserId"))).first(); // user what gets msg
+                        Document user = MongoClients.create("mongodb://localhost:27017").getDatabase("users_bd").getCollection("users")
+                                .find(eq("user_id", text_doc.getString("userId"))).first(); // user what sends msg
+
+                        Document user_to_send = MongoClients.create("mongodb://localhost:27017").getDatabase("users_bd").getCollection("users")
+                                .find(eq("user_id", text_doc.getString("sendUserId"))).first(); // user what gets msg
 
                         // TODO: сделать хранилище сообщений на пользовательских серверах msgS
 

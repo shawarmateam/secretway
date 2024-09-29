@@ -38,8 +38,8 @@ public class ClientHandler extends Thread {
                 Document obj = Document.parse(message);
 
                 if (obj.containsKey("msg") && obj.containsKey("userId")) {
-                    System.out.println(obj.get("userId") + ">> " + obj.get("msg"));
-                    sendToAll(obj);
+                    System.out.println("LOG: "+obj);
+                    sendToServer(obj);
                 }
             }
             allSockets.remove(clientSocket);
@@ -49,60 +49,46 @@ public class ClientHandler extends Thread {
         }
     }
 
-
-    private static MongoCollection<Document> getUsrDatabase() {
-        String uri = "mongodb://localhost:27017"; // any server
-
-        MongoDatabase users_db;
-        try (MongoClient mongoClient = MongoClients.create(uri)) {
-            users_db = mongoClient.getDatabase("users_bd");
-            return users_db.getCollection("users");
-        }
-    }
-
-    private static MongoCollection<Document> getOffAccServersDatabase() {
-        String uri = "mongodb://localhost:27017"; // any server
-
-        MongoDatabase servers_db;
-        try (MongoClient mongoClient = MongoClients.create(uri)) {
-            servers_db = mongoClient.getDatabase("servers_bd");
-            return servers_db.getCollection("offacc_servers");
-        }
-    }
-
     private static String findIp(String ip) {
         Pattern pattern = Pattern.compile("^(.*?)(?=:)");
         Matcher matcher = pattern.matcher(ip);
 
-        return matcher.find() ? matcher.group(1) : null;
+        return matcher.find() ? matcher.group() : null;
     }
 
     private static String findPort(String port) {
         Pattern pattern = Pattern.compile("(?<=:).*$");
         Matcher matcher = pattern.matcher(port);
 
-        return matcher.find() ? matcher.group(1) : null;
+        return matcher.find() ? matcher.group() : null;
     }
 
-    private void sendToAll(Document msg) throws IOException {
+    private void sendToServer(Document msg) throws IOException {
 //        for (Socket socket : allSockets) {
 //            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 //            out.println(user + ">> " + msg);
 //        }
 
-        MongoCollection<Document> usrDatabase = getUsrDatabase();
-        Document user = usrDatabase.find(eq("usertag", msg.getString("user"))).first();
+        System.out.println("LOG: Start of sendToServer()");
 
-        // TODO: Переписать эту часть и убрать getOffAccServersDatabase()
+        Document user = MongoClients.create("mongodb://localhost:27017").getDatabase("users_bd").getCollection("users")
+                .find(eq("user_id", msg.getString("userId"))).first();
 
         assert user != null;
-        String current_srv = user.getString("current_srv");
-        if (getOffAccServersDatabase().find(eq("server_ip", current_srv)).first() == null) {
-            try (Socket offAccSocket = new Socket(findIp(current_srv), Integer.parseInt(Objects.requireNonNull(findPort(current_srv))))) {
-                PrintWriter out = new PrintWriter(offAccSocket.getOutputStream(), true);
-                out.println(msg);
-            }
-        }
+        System.out.println("LOG: User isn't null");
 
+        String current_srv = user.getString("current_srv");
+
+        MongoClients.create("mongodb://localhost:27017").getDatabase("servers_bd").getCollection("offacc_servers")
+                .find(eq("server_ip", current_srv)).first();
+
+        System.out.println("LOG: (sendToServer) sending message to server...");
+
+        try (Socket offAccSocket = new Socket(findIp(current_srv), Integer.parseInt(Objects.requireNonNull(findPort(current_srv))))) {
+            PrintWriter out = new PrintWriter(offAccSocket.getOutputStream(), true);
+            msg.replace("client", false);
+            System.out.println("LOG: (sendToServer) "+msg);
+            out.println(msg.toJson());
+        }
     }
 }
