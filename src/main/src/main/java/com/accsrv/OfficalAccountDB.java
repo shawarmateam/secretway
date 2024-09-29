@@ -147,7 +147,8 @@ public class OfficalAccountDB {
             System.out.println("LOG: '"+findPort(server_ip)+"'");
             try (Socket socket = new Socket(findIp(server_ip), Integer.parseInt(Objects.requireNonNull(findPort(server_ip))))) {
                 PrintWriter msgs_out = new PrintWriter(socket.getOutputStream(), true);
-                msgs_out.println(text_doc.toString());
+                msgs_out.println(text_doc.toJson());
+                System.out.println("LOG: Sended! ("+text_doc.toJson()+")");
 
             } catch (IOException e) {
                 e.printStackTrace();

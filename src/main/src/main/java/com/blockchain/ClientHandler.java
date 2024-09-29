@@ -37,8 +37,8 @@ public class ClientHandler extends Thread {
             while ((message = in.readLine()) != null) {
                 Document obj = Document.parse(message);
 
-                if (!obj.get("msg").toString().isEmpty() && !obj.get("user").toString().isEmpty()) {
-                    System.out.println(obj.get("user") + ">> " + obj.get("msg"));
+                if (obj.containsKey("msg") && obj.containsKey("userId")) {
+                    System.out.println(obj.get("userId") + ">> " + obj.get("msg"));
                     sendToAll(obj);
                 }
             }
@@ -92,6 +92,8 @@ public class ClientHandler extends Thread {
 
         MongoCollection<Document> usrDatabase = getUsrDatabase();
         Document user = usrDatabase.find(eq("usertag", msg.getString("user"))).first();
+
+        // TODO: Переписать эту часть и убрать getOffAccServersDatabase()
 
         assert user != null;
         String current_srv = user.getString("current_srv");
