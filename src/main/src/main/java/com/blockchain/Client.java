@@ -1,8 +1,8 @@
 package com.blockchain;
+import org.bson.Document;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
-import org.json.simple.*;
 
 public class Client {
     public static void main(String[] args) {
@@ -28,7 +28,7 @@ public class Client {
                 }
 
                 if (userInput.charAt(0) != '!') {
-                    JSONObject objSocket = new JSONObject();
+                    Document objSocket = new Document();
                     objSocket.put("msg", userInput);
                     objSocket.put("userId", "0");
                     objSocket.put("password", "hui_penis");
@@ -36,7 +36,7 @@ public class Client {
                     objSocket.put("client", true);
 
                     System.out.println("LOG: message send to server '"+socket.getInetAddress()+"'\n"+objSocket);
-                    out.println(objSocket.toJSONString());
+                    out.println(objSocket.toJson());
                     System.out.println(in.readLine());
                 }
             }
