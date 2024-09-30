@@ -1,4 +1,4 @@
-import org.json.simple.JSONObject;
+import org.bson.Document;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +7,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client4Tests {
+public class Client {
     public static void main(String[] args) {
-        try (Socket socket = new Socket("localhost", 1200)) {
+        try (Socket socket = new Socket("localhost", 1201)) {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             Scanner scanner = new Scanner(System.in);
@@ -31,11 +31,15 @@ public class Client4Tests {
                 }
 
                 if (userInput.charAt(0) != '!') {
-                    JSONObject objSocket = new JSONObject();
+                    Document objSocket = new Document();
                     objSocket.put("msg", userInput);
-                    objSocket.put("user", "Adisteyf");
+                    objSocket.put("userId", "0");
+                    objSocket.put("password", "hui_penis");
+                    objSocket.put("sendUserId", "0");
+                    objSocket.put("client", true);
 
-                    out.println(objSocket.toJSONString());
+                    System.out.println("LOG: message send to server '"+socket.getInetAddress()+"'\n"+objSocket);
+                    out.println(objSocket.toJson());
                     System.out.println(in.readLine());
                 }
             }

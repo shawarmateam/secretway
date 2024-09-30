@@ -2,10 +2,8 @@ package com.accsrv;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.mindrot.jbcrypt.BCrypt;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -24,12 +22,28 @@ public class OfficalAccountDB {
             System.out.println("Starting off. accounts server...");
 
             while (true) {
+                System.out.println("LOG: Waiting for client...");
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client was join: " + clientSocket.getInetAddress());
+                System.out.println("LOG: Client was join (" + clientSocket.getInetAddress()+")");
 
                 Thread sv_thread = new Thread(() -> serverHandler(clientSocket));
                 sv_thread.start();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void checkVer() {
+        try {
+            BufferedReader br0 = new BufferedReader(new FileReader("./VERSION"));
+            String[] ver = br0.readLine().split(" ");
+
+            System.out.println("LOG: (type) '"+ver[0]+"'");
+            System.out.println("LOG: (version) '"+ver[1]+"'");
+
+            BufferedReader br1 = new BufferedReader(new FileReader("./VERSION"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,6 +102,7 @@ public class OfficalAccountDB {
                             }
                         }
                     }
+                    System.out.println("LOG: client disconnected");
                 }
 
                 // if msgS join to OffAcc server
@@ -104,6 +119,7 @@ public class OfficalAccountDB {
                         System.out.println(user);
                         System.out.println(user_to_send);
                     }
+                    System.out.println("LOG: msgS disconnected");
                 }
             }
             allSockets.remove(clientSocket);

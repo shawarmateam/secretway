@@ -57,11 +57,6 @@ public class ClientHandler extends Thread {
     }
 
     private void sendToServer(Document msg) throws IOException {
-//        for (Socket socket : allSockets) {
-//            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-//            out.println(user + ">> " + msg);
-//        }
-
         System.out.println("LOG: Start of sendToServer()");
 
         Document user = MongoClients.create("mongodb://localhost:27017").getDatabase("users_bd").getCollection("users")

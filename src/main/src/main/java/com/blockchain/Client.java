@@ -6,14 +6,17 @@ import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
-        try (Socket socket = new Socket("localhost", 1201)) {
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            Scanner scanner = new Scanner(System.in);
-            String userInput;
+        System.out.println("Введите сообщение (введите '!exit' для выхода):");
+        while (true) {
+            try (Socket socket = new Socket("localhost", 1201)) {
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            System.out.println("Введите сообщение (введите '!exit' для выхода):");
-            while (true) {
+                Scanner scanner = new Scanner(System.in);
+
+                // TODO: пофиксить ошибку изза которой один клиент пишет только 1но сооб.
+
+                String userInput;
                 userInput = scanner.nextLine();
                 if (userInput.isEmpty()) {
                     continue;
@@ -35,13 +38,14 @@ public class Client {
                     objSocket.put("sendUserId", "0");
                     objSocket.put("client", true);
 
-                    System.out.println("LOG: message send to server '"+socket.getInetAddress()+"'\n"+objSocket);
+                    System.out.println("LOG: message send to server '" + socket.getInetAddress() + "'\n" + objSocket);
                     out.println(objSocket.toJson());
                     System.out.println(in.readLine());
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
