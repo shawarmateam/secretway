@@ -7,12 +7,12 @@ import java.util.Scanner;
 public class Client {
     public static void main(String[] args) {
         System.out.println("Введите сообщение (введите '!exit' для выхода):");
+        Scanner scanner = new Scanner(System.in);
         while (true) {
             try (Socket socket = new Socket("localhost", 1201)) {
+                System.out.println("LOG: connected to server");
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                Scanner scanner = new Scanner(System.in);
 
                 // TODO: пофиксить ошибку изза которой один клиент пишет только 1но сооб.
 
@@ -40,12 +40,13 @@ public class Client {
 
                     System.out.println("LOG: message send to server '" + socket.getInetAddress() + "'\n" + objSocket);
                     out.println(objSocket.toJson());
-                    System.out.println(in.readLine());
+                    System.out.println("LOG: end of try()");
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
+            System.out.println("LOG: end of while() cycle");
         }
     }
 }
