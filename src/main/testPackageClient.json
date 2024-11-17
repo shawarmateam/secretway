@@ -1,0 +1,7 @@
+{
+  "userId": "1234",
+  "msg": "message",
+  "sendUserId": "4321",
+  "password": "password",
+  "client": true
+}
